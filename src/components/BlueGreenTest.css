@@ -6,7 +6,8 @@
 
 .blue-green-test-container {
   width: 100% !important;
-  height: 100% !important;
+  max-width: none !important;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
