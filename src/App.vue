@@ -1,4 +1,7 @@
 <template>
+  <div class="attribution">
+    Code adapted from <a href="https://ismy.blue" target="_blank">ismy.blue</a>
+  </div>
   <BlueGreenTest />
 </template>
 
