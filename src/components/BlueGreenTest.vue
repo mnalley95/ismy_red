@@ -7,18 +7,12 @@
             <span class="background-white">Test <i>your</i> color categorization</span>
           </h1>
           <h1 v-else key="main" class="blue-green-test-title">
-            <span class="background-white">Is <i>my</i> blue <i>your</i> blue?</span>
+            <span class="background-white">Is <i>my</i> red <i>your</i> red?</span>
           </h1>
         </transition>
       </div>
       <div v-else class="blue-green-test-content blue-green-test-result-screen">
-        <Results
-          :binPosition="BIN_POSITION"
-          :count="BIN_COUNT"
-          :xCdf="X_CDF"
-          :yCdf="Y_CDF"
-          :userThreshold="finalHue"
-        />
+        <Results @reset="reset" />
       </div>
       <div v-if="rounds < MAX_ROUNDS" class="blue-green-test-button-container three-buttons">
         <button @click="selectColor(leftButton)" class="blue-green-test-button grow-button">
@@ -75,7 +69,10 @@
           People have different names for the colors they see.
           <a href="https://en.wikipedia.org/wiki/Sapir%E2%80%93Whorf_hypothesis" target="_blank"
             >Language can affect how we memorize and name colors</a
-          >. This is a color naming test designed to measure your personal blue-green boundary.
+          >. This is a color naming test designed to measure your personal red-yellow boundary.
+        </p>
+        <p>
+          The test focuses on red-yellow hues between 15 and 45 degrees in HSL color space. Hue 0/360 is red, and hue 60 is yellow. The test uses your responses to determine where you draw the boundary between these colors.
         </p>
         <h2>Test validity</h2>
         <p>
@@ -187,7 +184,7 @@ export default {
   },
   data() {
     return {
-      currentHue: Math.random() > 0.5 ? 150 : 210,
+      currentHue: Math.random() > 0.5 ? 15 : 45,
       showInitialMessage: true,
       polarity: 0,
       rounds: 0,
@@ -197,7 +194,7 @@ export default {
       maskImageUrl: maskImage,
       showAbout: false,
       showDemo: false,
-      greenButtonRight: Math.random() > 0.5,
+      yellowButtonRight: Math.random() > 0.5,
       firstColorMislabeled: false,
       allSame: false,
       showResults: false,
@@ -206,10 +203,10 @@ export default {
   },
   computed: {
     rightButton() {
-      return this.greenButtonRight ? 'green' : 'blue'
+      return this.yellowButtonRight ? 'yellow' : 'red'
     },
     leftButton() {
-      return this.greenButtonRight ? 'blue' : 'green'
+      return this.yellowButtonRight ? 'red' : 'yellow'
     },
     currentColor() {
       return `hsl(${this.currentHue}, 100%, 50%)`
@@ -242,50 +239,26 @@ export default {
   methods: {
     selectColor(color) {
       this.responses.push({ hue: this.currentHue, response: color })
-
-      if (this.rounds === 0) {
-        if (color === 'blue' && this.currentHue < 180) {
-          this.firstColorMislabeled = true
-        } else if (color === 'green' && this.currentHue > 180) {
-          this.firstColorMislabeled = true
-        }
-        if (this.firstColorMislabeled) {
-          return
-        }
-      }
-
-      // Get the new probe value
-      const { b, newProbe, polarity } = fitSigmoid(
-        this.responses.map((r) => r.hue),
-        this.responses.map((r) => r.response === 'blue'),
-        this.polarity,
-        0.4
-      )
-      this.polarity = polarity == 1 ? -1 : 1
-      this.currentHue = newProbe
       this.rounds++
+      
       if (this.rounds === MAX_ROUNDS) {
-        if (
-          this.responses.every((r) => r.response === 'blue') ||
-          this.responses.every((r) => r.response === 'green')
-        ) {
-          this.allSame = this.responses[0].response
-          return
-        }
-        this.finalHue = 180 - b
-        this.currentHue = this.finalHue
         this.showResults = true
         confetti()
+        return
       }
+
+      // Just show a random red-ish hue between 15-45
+      this.currentHue = Math.random() * 30 + 15
+      
       this.showMask = true
       setTimeout(() => {
         this.showMask = false
       }, 200)
     },
     reset() {
-      let currentHue = Math.random() > 0.5 ? 150 : 210
+      let currentHue = Math.random() > 0.5 ? 15 : 45
       if (this.firstColorMislabeled) {
-        currentHue = this.currentHue == 210 ? 150 : 210
+        currentHue = this.currentHue == 45 ? 15 : 45
       }
 
       this.currentHue = currentHue

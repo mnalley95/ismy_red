@@ -1,14 +1,17 @@
 .blue-green-test-wrapper {
   width: 100vw !important;
-  max-width: none !important;
-  height: 100dvh;
+  height: 100vh !important;
   overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .blue-green-test-container {
   width: 100% !important;
-  max-width: none !important;
-  height: 100%;
+  height: 100% !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
