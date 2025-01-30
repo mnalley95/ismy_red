@@ -6,7 +6,7 @@
         <p>Calculating results...</p>
       </div>
       <div v-else class="prank-message">
-        <h1>Nice try, they were all red! 🤓</h1>
+        <h1>They're all red to me 🤓</h1>
         <button @click="$emit('reset')" class="reset-button">Try Again</button>
       </div>
     </div>
